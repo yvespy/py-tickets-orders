@@ -92,6 +92,13 @@ class TicketSerializer(serializers.ModelSerializer):
         row = attrs["row"]
         seat = attrs["seat"]
         movie_session = attrs["movie_session"]
+        cinema_hall = movie_session.cinema_hall
+
+        if row > cinema_hall.rows or seat > cinema_hall.seats_in_row:
+            raise serializers.ValidationError(
+                f"Invalid seat position. "
+                f"Cinema hall has {cinema_hall.rows} rows and {cinema_hall.seats_in_row} seats in each row."
+            )
 
         if Ticket.objects.filter(
                 movie_session=movie_session, row=row, seat=seat
